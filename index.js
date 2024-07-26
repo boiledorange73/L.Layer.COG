@@ -32,24 +32,31 @@ window.addEventListener("load", function() {
   };
   // overlays
   // cog = BO.L.layer.cog("https://boiledorange73.sakura.ne.jp/data/cog-tokyo5000-3857.tif", 4);
-  cog = BO.L.layer.cog(
+  cog_kanto_rapid_3857 = BO.L.layer.cog(
       "https://boiledorange73.sakura.ne.jp/data/cog-kanto_rapid-3857.tif",
       3,
       {
-          "nodata": [0,0,0]
+          // "fillValue": 255,
+          // "nodata": [255,255,255]
       }
   );
+  cog_tokyo5000_3857 = BO.L.layer.cog(
+      "https://boiledorange73.sakura.ne.jp/data/cog-tokyo5000-3857.tif",
+      4
+  );
+
   var overlays = {
-      "COG": cog
+      "東京5000": cog_tokyo5000_3857,
+      "迅速測図": cog_kanto_rapid_3857,
   };
   // Creates the map instance.
   var map = L.map('MAP', {
-    "layers": [baseMaps["地理院淡色地図"], cog],
-    "maxZoom": 16,
+    "layers": [baseMaps["地理院淡色地図"], cog_kanto_rapid_3857, cog_tokyo5000_3857],
+    "maxZoom": 18,
   });
   // Adds layer control
   var layercontrol = L.control.layers(baseMaps, overlays).addTo(map);
   // Sets view.
-  map.setView([35.687271203860114, 139.76957213401178], 16);
-  // map.fitBounds([[20.4, 122.9],[45.6,154.0]]);
+  // map.setView([35.687271203860114, 139.76957213401178], 9);
+  map.fitBounds([[34.8595, 138.9469],[36.4655, 140.8803]]);
 });
