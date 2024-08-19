@@ -181,7 +181,10 @@
                 this._canvas = L.DomUtil.create("canvas");
             }
             map._panes.overlayPane.appendChild(this._canvas);
-            map.on("moveend", this._draw, this);
+            // 2024-08-19 Modified: Unlocking  before drawing added.
+            map.on("moveend", this._unlock_and_draw, this);
+            // 2023-08-19 Added: hides the image during zoom in/out.
+            map.on("zoomstart", this._lock, this);
             this._draw();
         },
         "onRemove": function onRemove(map) {
@@ -269,7 +272,26 @@
                 this.options.nodata
             );
         },
+        // 2024-08-19 Added
+        "_lock": function _lock() {
+            this._locked = true;
+            this._clear();
+        },
+        // 2024-08-19 Added
+        "_unlock_and_draw": function _unlock_and_draw() {
+            this._locked = false;
+            this._draw();
+        },
+        // 2024-08-19 Added
+        "_clear": function _clear() {
+            if( this._canvas ) {
+                var ctx = this._canvas.getContext('2d');
+                ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+            }
+        },
         "_draw": function _draw() {
+            // 2024-08-19 Added: always clears all
+            this._clear();
             // checks whether this is locked.
             if( this._locked || !this._tiff ) {
                 this._need_draw = true;
